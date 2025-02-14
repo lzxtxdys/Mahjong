@@ -12,7 +12,7 @@ class Player:
         self.name = name
         self.hand = []
         self.is_hu = False
-        self.dice_roll = random.randint(1, 6) + random.randint(1, 6)  # 每个玩家扔两颗骰子
+        self.dice_roll = random.randint(1, 6) + random.randint(1, 6)
     
     def draw_tile(self, deck, count=1):
         for _ in range(count):
@@ -23,7 +23,7 @@ class Player:
     
     def discard_tile(self):
         if not self.hand:
-            return None  # 避免空手牌时调用 pop()
+            return None  # avoid using pop while hand is empty
         return self.hand.pop(random.randint(0, len(self.hand) - 1))
     
     def check_hu(self):
@@ -38,7 +38,7 @@ class Player:
         tiles_wan = sorted([t for t in self.hand if "W" in t])
         tiles_bing = sorted([t for t in self.hand if "B" in t])
         tiles_tiao = sorted([t for t in self.hand if "T" in t])
-        return f"万({tiles_wan}) 饼({tiles_bing}) 条({tiles_tiao})"
+        return f"({tiles_wan}) ({tiles_bing}) ({tiles_tiao})"
     
     def exchange_three(self, target_player):
         suits = ["W", "B", "T"]
