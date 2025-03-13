@@ -13,6 +13,12 @@ class Player:
         self.hand = []
         self.is_hu = False
         self.dice_roll = random.randint(1, 6) + random.randint(1, 6)
+        self.bannned_suit = None
+
+    # def choose_banned_suit(self):
+    #     suits = ["W", "B", "T"]
+    #     self.bannned_suit = random.choice(suits)
+    #     print(f"{self.name} bans suit {self.bannned_suit}")
     
     def draw_tile(self, deck, count=1):
         for _ in range(count):
@@ -24,12 +30,94 @@ class Player:
     def discard_tile(self):
         if not self.hand:
             return None  # avoid using pop while hand is empty
+        
+        # Any time a player has a tile of the banned suit, they must discard it.
+        banned_tiles = [tile for tile in self.hand if self.banned_suit in tile]
+        if banned_tiles:
+            discarded_tile = random.choice(banned_tiles)
+            self.hand.remove(discarded_tile)
+            print(f"{self.name} discarded {discarded_tile} (Banned Suit)")
+            return discarded_tile
+        
+        discarded_tile = self.hand.pop(random.randint(0, len(self.hand) - 1))
+        print(f"{self.name} discarded {discarded_tile}")
         return self.hand.pop(random.randint(0, len(self.hand) - 1))
     
     def check_hu(self):
-        if random.random() < 0.1:
+        if self.bannned_suit and any(self.bannned_suit in tile for tile in self.hand):
+            print(f"{self.name} has banned suit {self.bannned_suit}, cannot Hu!")
+            return False
+        
+        sorted_hand = sorted(self.hand)
+
+        if self.is_seven_pairs(sorted_hand):
+            print(f"{self.name} has seven pairs!")
             self.is_hu = True
-        return self.is_hu
+            return True
+        
+        if self.is_regular_hu(sorted_hand):
+            print(f"{self.name} has a regular Hu!")
+            self.is_hu = True
+            return True
+        
+        return False
+    
+    def is_seven_pairs(self, hand):
+        if len(hand) != 14:
+            return False
+        
+        counts = {}
+        for tile in hand:
+            counts[tile] = counts.get(tile, 0) + 1
+
+        return all(count == 2 for count in counts.values())
+    
+    def is_regular_hu(self, hand):
+        if len(hand) != 14:
+            return False
+        
+        counts = {}
+        for tile in hand:
+            counts[tile] = counts.get(tile, 0) + 1
+
+        pairs = [tile for tile, count in counts.items() if count >= 2]
+
+        for pair in pairs:
+            temp_counts = counts.copy()
+            temp_counts[pair] -= 2
+
+            if self.canform_melds(temp_counts):
+                return True
+        
+        return False
+    
+    def can_form_melds(self, counts):
+        remaining_tiles = [tile for tile, count in counts.items() if count > 0]
+
+        if not remaining_tiles:
+            return True
+
+        first_tile = remaining_tiles[0]
+
+        # Try to form AAA
+        if counts[first_tile] >= 3:
+            counts[first_tile] -= 3
+            if self.can_form_melds(counts):
+                return True
+            counts[first_tile] += 3
+
+        # ABC
+        suit = first_tile[-1]
+        if all(f"{int(first_tile[0]) + i}{suit}" in counts and counts[f"{int(first_tile[0]) + i}{suit}"] > 0 for i in range(3)):
+            for i in range(3):
+                counts[f"{int(first_tile[0]) + i}{suit}"] -= 1
+            if self.can_form_melds(counts):
+                return True
+            for i in range(3):
+                counts[f"{int(first_tile[0]) + i}{suit}"] += 1
+
+        return False
+
     
     def sort_hand(self):
         self.hand.sort()
@@ -40,22 +128,50 @@ class Player:
         tiles_tiao = sorted([t for t in self.hand if "T" in t])
         return f"({tiles_wan}) ({tiles_bing}) ({tiles_tiao})"
     
+    def count_suits(self):
+        count = {"W": 0, "B": 0, "T": 0}
+        for tile in self.hand:
+            suit = tile[-1]
+            count[suit] += 1
+        return count
+    
     def exchange_three(self, target_player):
         suits = ["W", "B", "T"]
         chosen_suit = None
-
-        for suit in suits:
-            same_suit_tiles = [tile for tile in self.hand if suit in tile]
-            target_suit_tiles = [tile for tile in target_player.hand if suit in tile]
-            if len(same_suit_tiles) >= 3 and len(target_suit_tiles) >= 3:
+        count = self.count_suits()
+        
+        # choose a suit that least and at least 3 tiles
+        possible_suits = sorted(count.items(), key=lambda x: x[1])  # 按数量排序
+        chosen_suit = None
+        for suit, num in possible_suits:
+            if num >= 3:
                 chosen_suit = suit
                 break
-
+        
+        # if the least suit has less than 3 tiles, choose the second least suit
         if chosen_suit is None:
-            return [], []  # If no valid suit found, no exchange happens
+            chosen_suit = possible_suits[1][0] if len(possible_suits) > 1 else possible_suits[0][0]
 
-        chosen_tiles = random.sample([tile for tile in self.hand if chosen_suit in tile], 3)
-        received_tiles = random.sample([tile for tile in target_player.hand if chosen_suit in tile], 3)
+        # for suit in suits:
+        #     same_suit_tiles = [tile for tile in self.hand if suit in tile]
+        #     target_suit_tiles = [tile for tile in target_player.hand if suit in tile]
+        #     if len(same_suit_tiles) >= 3 and len(target_suit_tiles) >= 3:
+        #         chosen_suit = suit
+        #         break
+
+        # if chosen_suit is None:
+        #     return [], []  # If no valid suit found, no exchange happens
+
+        # chosen_tiles = random.sample([tile for tile in self.hand if chosen_suit in tile], 3)
+        # received_tiles = random.sample([tile for tile in target_player.hand if chosen_suit in tile], 3)
+
+        target_suit_tiles = [tile for tile in target_player.hand if chosen_suit in tile]
+        if len(target_suit_tiles) < 3:
+            print(f"{self.name} 无法与 {target_player.name} 交换 {chosen_suit} 牌，因为目标玩家该花色不足 3 张")
+            return [], []  # 交换失败
+    
+        chosen_tiles = random.sample([t for t in self.hand if chosen_suit in t], 3)
+        received_tiles = random.sample(target_suit_tiles, 3)
 
         # Remove exchanged tiles from both players
         for tile in chosen_tiles:
@@ -68,7 +184,19 @@ class Player:
         target_player.hand.extend(chosen_tiles)
 
         return chosen_tiles, received_tiles
+    
+    def determine_banned_suit(self):
+        # after exchange, determine the banned suit, it should be the least one. 
+        # if there are multiple that have the same amount, then randomly choose one.
+        count = self.count_suits()
+        sorted_suits = sorted(count.items(), key=lambda x: x[1])
 
+        self.banned_suit = sorted_suits[0][0]
+
+        if len(sorted_suits) > 1 and sorted_suits[0][1] == sorted_suits[1][1]:
+            self.banned_suit = random.choice([sorted_suits[0][0], sorted_suits[1][0]])
+
+        print(f"{self.name} bans suit {self.banned_suit}")
     
 # game
 class MahjongGame:
@@ -128,12 +256,14 @@ class MahjongGame:
         for player in self.players:
             print(f"{player.name}: {player.sorted_hand()} (Total: {len(player.hand)})")
 
+        print("\nChoosing banned suits...")
+        for player in self.players:
+            player.determine_banned_suit()
+
         # **Final check: Dealer must have 14 tiles, others 13**
         for player in self.players:
             expected_tiles = 14 if player == dealer else 13
             assert len(player.hand) == expected_tiles, f"ERROR: {player.name} has {len(player.hand)} tiles instead of {expected_tiles}!"
-
-
 
     
     def play_game(self):
