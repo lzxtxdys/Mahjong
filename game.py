@@ -14,11 +14,6 @@ class Player:
         self.is_hu = False
         self.dice_roll = random.randint(1, 6) + random.randint(1, 6)
         self.bannned_suit = None
-
-    # def choose_banned_suit(self):
-    #     suits = ["W", "B", "T"]
-    #     self.bannned_suit = random.choice(suits)
-    #     print(f"{self.name} bans suit {self.bannned_suit}")
     
     def draw_tile(self, deck, count=1):
         for _ in range(count):
@@ -86,7 +81,7 @@ class Player:
             temp_counts = counts.copy()
             temp_counts[pair] -= 2
 
-            if self.canform_melds(temp_counts):
+            if self.can_form_melds(temp_counts):
                 return True
         
         return False
@@ -118,7 +113,6 @@ class Player:
 
         return False
 
-    
     def sort_hand(self):
         self.hand.sort()
     
@@ -136,12 +130,11 @@ class Player:
         return count
     
     def exchange_three(self, target_player):
-        suits = ["W", "B", "T"]
-        chosen_suit = None
+        # suits = ["W", "B", "T"]
         count = self.count_suits()
         
         # choose a suit that least and at least 3 tiles
-        possible_suits = sorted(count.items(), key=lambda x: x[1])  # 按数量排序
+        possible_suits = sorted(count.items(), key=lambda x: x[1])
         chosen_suit = None
         for suit, num in possible_suits:
             if num >= 3:
@@ -152,23 +145,10 @@ class Player:
         if chosen_suit is None:
             chosen_suit = possible_suits[1][0] if len(possible_suits) > 1 else possible_suits[0][0]
 
-        # for suit in suits:
-        #     same_suit_tiles = [tile for tile in self.hand if suit in tile]
-        #     target_suit_tiles = [tile for tile in target_player.hand if suit in tile]
-        #     if len(same_suit_tiles) >= 3 and len(target_suit_tiles) >= 3:
-        #         chosen_suit = suit
-        #         break
-
-        # if chosen_suit is None:
-        #     return [], []  # If no valid suit found, no exchange happens
-
-        # chosen_tiles = random.sample([tile for tile in self.hand if chosen_suit in tile], 3)
-        # received_tiles = random.sample([tile for tile in target_player.hand if chosen_suit in tile], 3)
-
         target_suit_tiles = [tile for tile in target_player.hand if chosen_suit in tile]
         if len(target_suit_tiles) < 3:
-            print(f"{self.name} 无法与 {target_player.name} 交换 {chosen_suit} 牌，因为目标玩家该花色不足 3 张")
-            return [], []  # 交换失败
+            print(f"{self.name} cannot exchange {chosen_suit} with {target_player.name} since the tile of that suit less than 3")
+            return [], []
     
         chosen_tiles = random.sample([t for t in self.hand if chosen_suit in t], 3)
         received_tiles = random.sample(target_suit_tiles, 3)
@@ -293,7 +273,7 @@ class MahjongGame:
             
             discarded = player.discard_tile()
             if discarded:
-                print(f"{player.name} discarded {discarded}")
+                print(f"{player.name} discarded {discarded} 296")
                 self.discards.append(discarded)
             
             current_player_index = (current_player_index + 1) % 4
