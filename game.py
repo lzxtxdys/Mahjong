@@ -87,7 +87,7 @@ class MahjongGame:
             print(f"{player.name} rolled {player.dice_roll}")
 
         dealer = self.determine_dealer()
-        print(f"Dealer is {dealer.name}")
+        print(f"Dealer is {dealer.name} since they rolled the highest")
 
         # Initial dealing (4-4-4-1 structure)
         for _ in range(3):
