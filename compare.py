@@ -294,7 +294,9 @@ class MahjongGame:
             
             discarded = player.discard_tile()
             if discarded:
-                print(f"{player.name} discarded {discarded}")
+                print(f"{player.name} discarded {discarded} 314")
+                print(f"{player.name} hand after discard: {player.sorted_hand()}")
+                print("                           ")
                 self.discards.append(discarded)
             
             current_player_index = (current_player_index + 1) % 4

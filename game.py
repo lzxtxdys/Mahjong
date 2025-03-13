@@ -21,22 +21,27 @@ class Player:
                 self.hand.append(deck.pop())
         self.sort_hand()
         print(f"{self.name} hand after draw: {self.sorted_hand()}")
-    
+
     def discard_tile(self):
+        """
+        if the player has tiles of banned suit, they must discard the tiles
+        if there are no tiles of banned suit, then randomly discard a tile
+        """
         if not self.hand:
-            return None  # avoid using pop while hand is empty
-        
-        # Any time a player has a tile of the banned suit, they must discard it.
+            return None
+
+        # if banned tile exist, discard it**
         banned_tiles = [tile for tile in self.hand if self.banned_suit in tile]
         if banned_tiles:
             discarded_tile = random.choice(banned_tiles)
-            self.hand.remove(discarded_tile)
-            print(f"{self.name} discarded {discarded_tile} (Banned Suit)")
-            return discarded_tile
-        
-        discarded_tile = self.hand.pop(random.randint(0, len(self.hand) - 1))
+        else:
+            # if no banned tile, discard randomly
+            discarded_tile = random.choice(self.hand)
+
+        self.hand.remove(discarded_tile)
         print(f"{self.name} discarded {discarded_tile}")
-        return self.hand.pop(random.randint(0, len(self.hand) - 1))
+        return discarded_tile
+
     
     def check_hu(self):
         if self.bannned_suit and any(self.bannned_suit in tile for tile in self.hand):
@@ -128,42 +133,39 @@ class Player:
             suit = tile[-1]
             count[suit] += 1
         return count
-    
-    def exchange_three(self, target_player):
-        # suits = ["W", "B", "T"]
-        count = self.count_suits()
-        
-        # choose a suit that least and at least 3 tiles
-        possible_suits = sorted(count.items(), key=lambda x: x[1])
-        chosen_suit = None
-        for suit, num in possible_suits:
-            if num >= 3:
-                chosen_suit = suit
-                break
-        
-        # if the least suit has less than 3 tiles, choose the second least suit
-        if chosen_suit is None:
-            chosen_suit = possible_suits[1][0] if len(possible_suits) > 1 else possible_suits[0][0]
 
+    def exchange_three(self, target_player):
+        # choose the least but at least 3 tiles of a suit to exchange
+        count = self.count_suits()
+
+        # find suits that have more than 3 tiles and sort it by amount
+        valid_suits = sorted([(suit, num) for suit, num in count.items() if num >= 3], key=lambda x: x[1])
+
+        # choose the least but at least 3 tiles of a suit to exchange
+        if valid_suits:
+            chosen_suit = valid_suits[0][0]
+
+        # 检查目标玩家是否有足够的 chosen_suit 进行交换
         target_suit_tiles = [tile for tile in target_player.hand if chosen_suit in tile]
         if len(target_suit_tiles) < 3:
-            print(f"{self.name} cannot exchange {chosen_suit} with {target_player.name} since the tile of that suit less than 3")
-            return [], []
-    
+            print(f"{self.name} 无法与 {target_player.name} 交换 {chosen_suit}，因为目标玩家该花色不足 3 张")
+            return [], []  # 目标玩家不符合交换条件
+
+        # choose 3 tiles to exchange
         chosen_tiles = random.sample([t for t in self.hand if chosen_suit in t], 3)
         received_tiles = random.sample(target_suit_tiles, 3)
 
-        # Remove exchanged tiles from both players
+        # exchange tiles
         for tile in chosen_tiles:
             self.hand.remove(tile)
         for tile in received_tiles:
             target_player.hand.remove(tile)
 
-        # Add exchanged tiles to both players
         self.hand.extend(received_tiles)
         target_player.hand.extend(chosen_tiles)
 
         return chosen_tiles, received_tiles
+
     
     def determine_banned_suit(self):
         # after exchange, determine the banned suit, it should be the least one. 
@@ -212,7 +214,7 @@ class MahjongGame:
         for player in self.players:
             print(f"{player.name}: {player.sorted_hand()} (Total: {len(player.hand)})")
 
-        # **New: Players exchange three tiles**
+        # Players exchange three tiles**
         print("\nStarting tile exchange process...")
         for i in range(4):
             giver = self.players[i]
@@ -221,13 +223,15 @@ class MahjongGame:
             given, received = giver.exchange_three(receiver)
 
             if len(given) == 3 and len(received) == 3:
-                print(f"{giver.name} gives {given} to {receiver.name} and receives {received}")
+                print(f"{giver.name} gives {given} to {receiver.name}")
+                print(f"{giver.name} receives {received}")
             else:
                 print(f"Exchange failed between {giver.name} and {receiver.name}, retrying...")
 
                 # Retry until exchange succeeds
                 while len(given) != 3 or len(received) != 3:
                     given, received = giver.exchange_three(receiver)
+                    break
                     if len(given) == 3 and len(received) == 3:
                         print(f"Retry successful: {giver.name} gives {given} to {receiver.name} and receives {received}")
                         break
@@ -240,7 +244,7 @@ class MahjongGame:
         for player in self.players:
             player.determine_banned_suit()
 
-        # **Final check: Dealer must have 14 tiles, others 13**
+        #Final check: Dealer must have 14 tiles, others 13**
         for player in self.players:
             expected_tiles = 14 if player == dealer else 13
             assert len(player.hand) == expected_tiles, f"ERROR: {player.name} has {len(player.hand)} tiles instead of {expected_tiles}!"
@@ -261,7 +265,7 @@ class MahjongGame:
                 current_player_index = (current_player_index + 1) % 4
                 continue
             
-            print(f"{player.name} drawing tile, tile is {self.deck[-1]}")
+            print(f"{player.name} drawing tile, tile is {self.deck[-1]} (Remaining: {len(self.deck)-1})")
             player.draw_tile(self.deck)
             
             if player.check_hu():
@@ -273,8 +277,13 @@ class MahjongGame:
             
             discarded = player.discard_tile()
             if discarded:
-                print(f"{player.name} discarded {discarded} 296")
+                print(f"{player.name} hand after discard: {player.sorted_hand()}")
+                print("                           ")
                 self.discards.append(discarded)
+            
+            if not self.deck:
+                print("No more tiles in deck, game over!")
+                break
             
             current_player_index = (current_player_index + 1) % 4
         
