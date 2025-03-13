@@ -14,6 +14,7 @@ class Player:
         self.is_hu = False
         self.dice_roll = random.randint(1, 6) + random.randint(1, 6)
         self.bannned_suit = None
+        self.exposed_sets = [] # store exposed sets of tiles
     
     def draw_tile(self, deck, count=1):
         for _ in range(count):
@@ -117,6 +118,15 @@ class Player:
                 counts[f"{int(first_tile[0]) + i}{suit}"] += 1
 
         return False
+    
+    def peng(self, tile):
+        if self.hand.count(tile) >= 2:
+            self.hand.remove(tile)
+            self.hand.remove(tile)
+            self.exposed_sets.append([tile, tile, tile])
+            print(f"{self.name} Peng {tile}")
+            return True
+        return False
 
     def sort_hand(self):
         self.hand.sort()
@@ -125,7 +135,9 @@ class Player:
         tiles_wan = sorted([t for t in self.hand if "W" in t])
         tiles_bing = sorted([t for t in self.hand if "B" in t])
         tiles_tiao = sorted([t for t in self.hand if "T" in t])
-        return f"({tiles_wan}) ({tiles_bing}) ({tiles_tiao})"
+
+        peng_str = f" | PENG: {self.exposed_sets}" if self.exposed_sets else ""
+        return f"({tiles_wan}) ({tiles_bing}) ({tiles_tiao}){peng_str}"
     
     def count_suits(self):
         count = {"W": 0, "B": 0, "T": 0}
@@ -280,6 +292,23 @@ class MahjongGame:
                 print(f"{player.name} hand after discard: {player.sorted_hand()}")
                 print("                           ")
                 self.discards.append(discarded)
+
+                peng_player = None
+                for i in range(1, 4):
+                    next_player = self.players[(current_player_index + i) % 4]
+                    if next_player.peng(discarded):
+                        peng_player = next_player
+                        break
+
+                if peng_player:
+                    discarded_after_peng = peng_player.discard_tile()
+                    if discarded_after_peng:
+                        print(f"{peng_player.name} hand after discard: {peng_player.sorted_hand()}")
+                        print("                           ")
+                        self.discards.append(discarded_after_peng)
+
+                    # current_player_index = self.players.index(peng_player)
+                    continue
             
             if not self.deck:
                 print("No more tiles in deck, game over!")
