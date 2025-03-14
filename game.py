@@ -261,7 +261,60 @@ class MahjongGame:
             expected_tiles = 14 if player == dealer else 13
             assert len(player.hand) == expected_tiles, f"ERROR: {player.name} has {len(player.hand)} tiles instead of {expected_tiles}!"
 
-    
+    # def print_exposed_and_discarded_tiles(self):
+    #     "print all exposed(peng) and discarded tiles"
+    #     exposed_counts = {}
+    #     for player in self.players:
+    #         for peng_set in player.exposed_sets:
+    #             for tile in peng_set:
+    #                 exposed_counts[tile] = exposed_counts.get(tile, 0) + 1
+        
+    #     discard_counts = {}
+    #     for tile in self.discards:
+    #         discard_counts[tile] = discard_counts.get(tile, 0) + 1
+
+    #     sorted_exposed = {k: exposed_counts[k] for k in sorted (exposed_counts)}
+    #     sorted_discards = {k: discard_counts[k] for k in sorted (discard_counts)}
+        
+    #     print(f"Exposed tiles: {sorted_exposed}")
+    #     print(f"Discarded tiles: {sorted_discards}")
+
+    def print_exposed_and_discarded_tiles(self):
+        """ Print all exposed (peng) and discarded tiles, categorized by suit and sorted numerically. """
+
+        # Helper function to sort tiles within each suit
+        def categorize_and_sort(tile_dict):
+            categorized = {"W": [], "B": [], "T": []}
+            for tile, count in tile_dict.items():
+                suit = tile[-1]
+                categorized[suit].extend([tile] * count)
+
+            # Sort numerically within each suit
+            for suit in categorized:
+                categorized[suit].sort(key=lambda x: int(x[:-1]))  # Sort by number
+
+            return categorized
+
+        # Count all exposed tiles (peng sets)
+        exposed_counts = {}
+        for player in self.players:
+            for peng_set in player.exposed_sets:
+                for tile in peng_set:
+                    exposed_counts[tile] = exposed_counts.get(tile, 0) + 1
+
+        # Count all discarded tiles
+        discard_counts = {}
+        for tile in self.discards:
+            discard_counts[tile] = discard_counts.get(tile, 0) + 1
+
+        # Categorize and sort
+        sorted_exposed = categorize_and_sort(exposed_counts)
+        sorted_discarded = categorize_and_sort(discard_counts)
+
+        print(f"Exposed Tiles: {sorted_exposed}")
+        print(f"Discarded Tiles: {sorted_discarded}")
+
+
     def play_game(self):
         print("Game Start: Dealing tiles...")
         self.deal_tiles()
@@ -290,6 +343,7 @@ class MahjongGame:
             discarded = player.discard_tile()
             if discarded:
                 print(f"{player.name} hand after discard: {player.sorted_hand()}")
+                self.print_exposed_and_discarded_tiles()
                 print("                           ")
                 self.discards.append(discarded)
 
@@ -304,6 +358,7 @@ class MahjongGame:
                     discarded_after_peng = peng_player.discard_tile()
                     if discarded_after_peng:
                         print(f"{peng_player.name} hand after discard: {peng_player.sorted_hand()}")
+                        self.print_exposed_and_discarded_tiles()
                         print("                           ")
                         self.discards.append(discarded_after_peng)
 
