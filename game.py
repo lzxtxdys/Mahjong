@@ -15,6 +15,7 @@ class Player:
         self.dice_roll = random.randint(1, 6) + random.randint(1, 6)
         self.bannned_suit = None
         self.exposed_sets = [] # store exposed sets of tiles
+        self.gang_count = 0
     
     def draw_tile(self, deck, count=1):
         for _ in range(count):
@@ -22,129 +23,6 @@ class Player:
                 self.hand.append(deck.pop())
         self.sort_hand()
         print(f"{self.name} hand after draw: {self.sorted_hand()}")
-
-    def discard_tile(self):
-        """
-        if the player has tiles of banned suit, they must discard the tiles
-        if there are no tiles of banned suit, then randomly discard a tile
-        """
-        if not self.hand:
-            return None
-
-        # if banned tile exist, discard it**
-        banned_tiles = [tile for tile in self.hand if self.banned_suit in tile]
-        if banned_tiles:
-            discarded_tile = random.choice(banned_tiles)
-        else:
-            # if no banned tile, discard randomly
-            discarded_tile = random.choice(self.hand)
-
-        self.hand.remove(discarded_tile)
-        print(f"{self.name} discarded {discarded_tile}")
-        return discarded_tile
-
-    
-    def check_hu(self):
-        if self.bannned_suit and any(self.bannned_suit in tile for tile in self.hand):
-            print(f"{self.name} has banned suit {self.bannned_suit}, cannot Hu!")
-            return False
-        
-        sorted_hand = sorted(self.hand)
-
-        if self.is_seven_pairs(sorted_hand):
-            print(f"{self.name} has seven pairs!")
-            self.is_hu = True
-            return True
-        
-        if self.is_regular_hu(sorted_hand):
-            print(f"{self.name} has a regular Hu!")
-            self.is_hu = True
-            return True
-        
-        return False
-    
-    def is_seven_pairs(self, hand):
-        if len(hand) != 14:
-            return False
-        
-        counts = {}
-        for tile in hand:
-            counts[tile] = counts.get(tile, 0) + 1
-
-        return all(count == 2 for count in counts.values())
-    
-    def is_regular_hu(self, hand):
-        if len(hand) != 14:
-            return False
-        
-        counts = {}
-        for tile in hand:
-            counts[tile] = counts.get(tile, 0) + 1
-
-        pairs = [tile for tile, count in counts.items() if count >= 2]
-
-        for pair in pairs:
-            temp_counts = counts.copy()
-            temp_counts[pair] -= 2
-
-            if self.can_form_melds(temp_counts):
-                return True
-        
-        return False
-    
-    def can_form_melds(self, counts):
-        remaining_tiles = [tile for tile, count in counts.items() if count > 0]
-
-        if not remaining_tiles:
-            return True
-
-        first_tile = remaining_tiles[0]
-
-        # Try to form AAA
-        if counts[first_tile] >= 3:
-            counts[first_tile] -= 3
-            if self.can_form_melds(counts):
-                return True
-            counts[first_tile] += 3
-
-        # ABC
-        suit = first_tile[-1]
-        if all(f"{int(first_tile[0]) + i}{suit}" in counts and counts[f"{int(first_tile[0]) + i}{suit}"] > 0 for i in range(3)):
-            for i in range(3):
-                counts[f"{int(first_tile[0]) + i}{suit}"] -= 1
-            if self.can_form_melds(counts):
-                return True
-            for i in range(3):
-                counts[f"{int(first_tile[0]) + i}{suit}"] += 1
-
-        return False
-    
-    def peng(self, tile):
-        if self.hand.count(tile) >= 2:
-            self.hand.remove(tile)
-            self.hand.remove(tile)
-            self.exposed_sets.append([tile, tile, tile])
-            print(f"{self.name} Peng {tile}")
-            return True
-        return False
-
-    def sort_hand(self):
-        self.hand.sort()
-    
-    def sorted_hand(self):
-        tiles_wan = sorted([t for t in self.hand if "W" in t])
-        tiles_bing = sorted([t for t in self.hand if "B" in t])
-        tiles_tiao = sorted([t for t in self.hand if "T" in t])
-
-        peng_str = f" | PENG: {self.exposed_sets}" if self.exposed_sets else ""
-        return f"({tiles_wan}) ({tiles_bing}) ({tiles_tiao}){peng_str}"
-    
-    def count_suits(self):
-        count = {"W": 0, "B": 0, "T": 0}
-        for tile in self.hand:
-            suit = tile[-1]
-            count[suit] += 1
-        return count
 
     def exchange_three(self, target_player):
         # choose the least but at least 3 tiles of a suit to exchange
@@ -177,7 +55,6 @@ class Player:
         target_player.hand.extend(chosen_tiles)
 
         return chosen_tiles, received_tiles
-
     
     def determine_banned_suit(self):
         # after exchange, determine the banned suit, it should be the least one. 
@@ -191,7 +68,180 @@ class Player:
             self.banned_suit = random.choice([sorted_suits[0][0], sorted_suits[1][0]])
 
         print(f"{self.name} bans suit {self.banned_suit}")
+
+    def discard_tile(self):
+        """
+        if the player has tiles of banned suit, they must discard the tiles
+        if there are no tiles of banned suit, then randomly discard a tile
+        """
+        if not self.hand:
+            return None
+
+        # if banned tile exist, discard it**
+        banned_tiles = [tile for tile in self.hand if self.banned_suit in tile]
+        if banned_tiles:
+            discarded_tile = random.choice(banned_tiles)
+        else:
+            # if no banned tile, discard randomly
+            discarded_tile = random.choice(self.hand)
+
+        self.hand.remove(discarded_tile)
+        print(f"{self.name} discarded {discarded_tile}")
+        return discarded_tile
+
+    def peng(self, tile):
+        if self.hand.count(tile) >= 2:
+            self.hand.remove(tile)
+            self.hand.remove(tile)
+            self.exposed_sets.append([tile, tile, tile])
+            print(f"{self.name} Peng {tile}")
+            return True
+        return False
     
+    def is_seven_pairs(self, hand):
+        if len(hand) != 14:
+            return False
+        
+        counts = {}
+        for tile in hand:
+            counts[tile] = counts.get(tile, 0) + 1
+
+        return all(count == 2 for count in counts.values())
+    
+    def is_regular_hu(self, hand):
+        if len(hand) != 14:
+            return False
+        
+        counts = {}
+        for tile in hand:
+            counts[tile] = counts.get(tile, 0) + 1
+
+        pairs = [tile for tile, count in counts.items() if count >= 2]
+
+        for pair in pairs:
+            temp_counts = counts.copy()
+            temp_counts[pair] -= 2
+
+            if self.can_form_melds(temp_counts):
+                return True
+        
+        return False
+    
+    def is_pengpenghu(self):
+        counts = {}
+        for tile in self.hand:
+            counts[tile] = counts.get(tile, 0) + 1
+
+        triplet_count = sum(1 for count in counts.values() if count == 3)
+        pair_count = sum(1 for count in counts.values() if count == 2)
+
+        return triplet_count == 4 and pair_count == 1
+    
+    def is_same_color(self):
+        suits = {tile[-1] for tile in self.hand}
+        return len(suits) == 1
+    
+    def can_form_melds(self, counts):
+        remaining_tiles = [tile for tile, count in counts.items() if count > 0]
+
+        if not remaining_tiles:
+            return True
+
+        first_tile = remaining_tiles[0]
+
+        # Try to form AAA
+        if counts[first_tile] >= 3:
+            counts[first_tile] -= 3
+            if self.can_form_melds(counts):
+                return True
+            counts[first_tile] += 3
+
+        # ABC
+        suit = first_tile[-1]
+        if all(f"{int(first_tile[0]) + i}{suit}" in counts and counts[f"{int(first_tile[0]) + i}{suit}"] > 0 for i in range(3)):
+            for i in range(3):
+                counts[f"{int(first_tile[0]) + i}{suit}"] -= 1
+            if self.can_form_melds(counts):
+                return True
+            for i in range(3):
+                counts[f"{int(first_tile[0]) + i}{suit}"] += 1
+
+        return False
+
+    def sort_hand(self):
+        self.hand.sort()
+    
+    def sorted_hand(self):
+        tiles_wan = sorted([t for t in self.hand if "W" in t])
+        tiles_bing = sorted([t for t in self.hand if "B" in t])
+        tiles_tiao = sorted([t for t in self.hand if "T" in t])
+
+        peng_str = f" | PENG: {self.exposed_sets}" if self.exposed_sets else ""
+        return f"({tiles_wan}) ({tiles_bing}) ({tiles_tiao}){peng_str}"
+    
+    def count_suits(self):
+        count = {"W": 0, "B": 0, "T": 0}
+        for tile in self.hand:
+            suit = tile[-1]
+            count[suit] += 1
+        return count
+    
+    def check_hu(self):
+        if self.bannned_suit and any(self.bannned_suit in tile for tile in self.hand):
+            print(f"{self.name} has banned suit {self.bannned_suit}, cannot Hu!")
+            return False
+        
+        sorted_hand = sorted(self.hand)
+
+        if self.is_seven_pairs(sorted_hand):
+            print(f"{self.name} has seven pairs!")
+            self.is_hu = True
+            return True
+        
+        if self.is_regular_hu(sorted_hand):
+            print(f"{self.name} has a regular Hu!")
+            self.is_hu = True
+            return True
+        
+        return False
+    
+    def calculate_score(self, is_zimo=False):
+        # calculate score
+        # function: 1 * 2^(fan_count)
+        # basic hu = 1 score
+        # pengpenghu = 1 fan
+        # same_color = 2 fan
+        # 7 pairs = 2 fan
+        # zimo = 1 fan
+        # every gang = 1 fan
+        base_score = 1
+        fan_count = 0
+
+        # pengpenghu 1 fan
+        if self.is_pengpenghu():
+            fan_count += 1
+        
+        # same color 2 fan
+        if self.is_same_color():
+            fan_count += 2
+        
+        # 7 pairs 2 fan
+        if self.is_seven_pairs():
+            fan_count += 2
+        
+        # every gang 1 fan
+        fan_count += self.gang_count
+
+        # zimo 1 fan
+        if is_zimo:
+            fan_count += 1
+
+        final_score = base_score * (2 ** fan_count)
+
+        print(f"{self.name} hu! final score: {final_score}")
+        return final_score
+
+
 # game
 class MahjongGame:
     def __init__(self):
@@ -296,7 +346,6 @@ class MahjongGame:
         print(f"Exposed Tiles: {sorted_exposed}")
         print(f"Discarded Tiles: {sorted_discarded}")
 
-
     def play_game(self):
         print("Game Start: Dealing tiles...")
         self.deal_tiles()
@@ -316,7 +365,8 @@ class MahjongGame:
             player.draw_tile(self.deck)
             
             if player.check_hu():
-                print(f"{player.name} Hu! 🀄")
+                score = player.calculate_score(is_zimo=True)
+                print(f"{player.name} Hu! 🀄 Final Score: {score}")
                 player.is_hu = True
                 if sum(p.is_hu for p in self.players) == 3:
                     game_over = True
