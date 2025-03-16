@@ -261,24 +261,6 @@ class MahjongGame:
             expected_tiles = 14 if player == dealer else 13
             assert len(player.hand) == expected_tiles, f"ERROR: {player.name} has {len(player.hand)} tiles instead of {expected_tiles}!"
 
-    # def print_exposed_and_discarded_tiles(self):
-    #     "print all exposed(peng) and discarded tiles"
-    #     exposed_counts = {}
-    #     for player in self.players:
-    #         for peng_set in player.exposed_sets:
-    #             for tile in peng_set:
-    #                 exposed_counts[tile] = exposed_counts.get(tile, 0) + 1
-        
-    #     discard_counts = {}
-    #     for tile in self.discards:
-    #         discard_counts[tile] = discard_counts.get(tile, 0) + 1
-
-    #     sorted_exposed = {k: exposed_counts[k] for k in sorted (exposed_counts)}
-    #     sorted_discards = {k: discard_counts[k] for k in sorted (discard_counts)}
-        
-    #     print(f"Exposed tiles: {sorted_exposed}")
-    #     print(f"Discarded tiles: {sorted_discards}")
-
     def print_exposed_and_discarded_tiles(self):
         """ Print all exposed (peng) and discarded tiles, categorized by suit and sorted numerically. """
 
