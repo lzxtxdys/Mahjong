@@ -80,14 +80,83 @@ class Player:
         # if banned tile exist, discard it**
         banned_tiles = [tile for tile in self.hand if self.banned_suit in tile]
         if banned_tiles:
-            discarded_tile = random.choice(banned_tiles)
-        else:
-            # if no banned tile, discard randomly
-            discarded_tile = random.choice(self.hand)
+            discarded_tile = self.choose_safest_tile(banned_tiles, game)
+            print(f"{self.name} discarded {discarded_tile} (Banned Suit)")
+            self.hand.remove(discarded_tile)
+            return discarded_tile
+        
+        tile_scores = self.evaluate_tile_values(game)
 
+        discarded_tile = min(tile_scores, key=tile_scores.get)
         self.hand.remove(discarded_tile)
-        print(f"{self.name} discarded {discarded_tile}")
+        print(f"{self.name} discarded {discarded_tile} (safer tile)")
         return discarded_tile
+
+    def choose_safest_tile(self, candidates, game):
+        safest_tile = candidates[0]
+        min_risk = float('inf')
+
+        for tile in candidates:
+            risk = self.calculate_risk(tile, game)
+            if risk < min_risk:
+                min_risk = risk
+                safest_tile = tile
+
+        return safest_tile
+
+    def evaluate_tile_values(self, game):
+        tile_scores = {}
+
+        for tile in self.hand:
+            score = 0
+
+            # keep pairs as priority
+            if self.hand.count(tile) == 2:
+                score += 5  # high value for pairs
+
+            # keep straight
+            suit = tile[-1]
+            num = int(tile[:-1])
+
+            if f"{num-1}{suit}" in self.hand and f"{num+1}{suit}" in self.hand:
+                score += 5  # high value for straight
+            elif f"{num-1}{suit}" in self.hand or f"{num+1}{suit}" in self.hand:
+                score += 3  # medium value for half straight
+
+            # 3 same
+            if self.hand.count(tile) == 3:
+                score += 7  # highest value for 3 same
+
+            # check exposed and discarded tiles
+            score -= game.get_discard_count(tile)  # the tile is safer if it has been discarded more times
+
+            tile_scores[tile] = score
+
+        return tile_scores
+    
+    def calculate_risk(self, tile, game):
+        """
+        calculate the risk of discarding a tile:
+        - if another player needs this tile, they might win
+        - refer to other players' discard habits to avoid giving away points
+        """
+        risk = 0
+
+        # check if other players can win with this tile
+        for opponent in game.players:
+            if opponent != self and opponent.check_hu_with_tile(tile):
+                risk += 10  # 这张牌有被胡的风险
+
+        # check exposed and discarded tiles
+        risk -= game.get_discard_count(tile)  # The tile is safer if it has been discarded more times
+
+        return risk
+
+    def check_hu_with_tile(self, tile):
+        """ Check if the player can win with the given tile. """
+        temp_hand = self.hand.copy()
+        temp_hand.append(tile)
+        return self.is_seven_pairs(temp_hand) or self.is_regular_hu(temp_hand)
 
     def peng(self, tile):
         if self.hand.count(tile) >= 2:
@@ -346,6 +415,10 @@ class MahjongGame:
         print(f"Exposed Tiles: {sorted_exposed}")
         print(f"Discarded Tiles: {sorted_discarded}")
 
+    def get_discard_count(self, tile):
+        """ Return how many times a tile has been discarded """
+        return self.discards.count(tile)
+    
     def play_game(self):
         print("Game Start: Dealing tiles...")
         self.deal_tiles()
