@@ -76,35 +76,37 @@ class Player:
         """
         if not self.hand:
             return None
+        
+        opponent_analysis = self.analyze_opponents(game)
 
-        # if banned tile exist, discard it**
+        # if banned tile exist, discard it
         banned_tiles = [tile for tile in self.hand if self.banned_suit in tile]
         if banned_tiles:
-            discarded_tile = self.choose_safest_tile(banned_tiles, game)
+            discarded_tile = self.choose_safest_tile(banned_tiles, game, opponent_analysis)
             print(f"{self.name} discarded {discarded_tile} (Banned Suit)")
             self.hand.remove(discarded_tile)
             return discarded_tile
         
-        tile_scores = self.evaluate_tile_values(game)
+        tile_scores = self.evaluate_tile_values(game, opponent_analysis)
 
         discarded_tile = min(tile_scores, key=tile_scores.get)
         self.hand.remove(discarded_tile)
         print(f"{self.name} discarded {discarded_tile} (safer tile)")
         return discarded_tile
 
-    def choose_safest_tile(self, candidates, game):
+    def choose_safest_tile(self, candidates, game, opponent_analysis):
         safest_tile = candidates[0]
         min_risk = float('inf')
 
         for tile in candidates:
-            risk = self.calculate_risk(tile, game)
+            risk = self.calculate_risk(tile, game, opponent_analysis)
             if risk < min_risk:
                 min_risk = risk
                 safest_tile = tile
 
         return safest_tile
 
-    def evaluate_tile_values(self, game):
+    def evaluate_tile_values(self, game, opponent_analysis):
         tile_scores = {}
 
         for tile in self.hand:
@@ -134,7 +136,7 @@ class Player:
 
         return tile_scores
     
-    def calculate_risk(self, tile, game):
+    def calculate_risk(self, tile, game, opponent_analysis):
         """
         calculate the risk of discarding a tile:
         - if another player needs this tile, they might win
@@ -142,14 +144,20 @@ class Player:
         """
         risk = 0
 
-        # check if other players can win with this tile
-        for opponent in game.players:
-            if opponent != self and opponent.check_hu_with_tile(tile):
-                risk += 10  # 这张牌有被胡的风险
+        for opponent_name, strategy in opponent_analysis.items():
+            if strategy == "maybe same color":
+                if tile[-1] in {t[-1] for t in self.hand}:  # tile for same color
+                    risk += 5
 
-        # check exposed and discarded tiles
-        risk -= game.get_discard_count(tile)  # The tile is safer if it has been discarded more times
+            elif strategy == "maybe pengpenghu":
+                if self.hand.count(tile) == 2:  # tile is pair
+                    risk += 5
 
+            elif strategy == "可能在做七对":
+                if self.hand.count(tile) == 1:  # tile is single
+                    risk += 5
+
+        risk -= game.get_discard_count(tile)  # the tile is safer if it has been discarded more times
         return risk
 
     def check_hu_with_tile(self, tile):
@@ -157,6 +165,39 @@ class Player:
         temp_hand = self.hand.copy()
         temp_hand.append(tile)
         return self.is_seven_pairs(temp_hand) or self.is_regular_hu(temp_hand)
+
+    def analyze_opponents(self, game):
+        """ 
+        analyze opponents' play style and guess their target combinations:
+        - If a player only discards 1~2 suits, they may be going for same color
+        - If a player frequently pengs/gangs, they may be going for pengpenghu
+        - If a player rarely pengs, they may be going for seven pairs
+        """
+        player_analysis = {}
+
+        for opponent in game.players:
+            if opponent == self:
+                continue  # not analyze self
+
+            # check the suits of the opponent's hand
+            discard_suits = {tile[-1] for tile in opponent.hand}
+            exposed_suits = {tile[-1] for peng in opponent.exposed_sets for tile in peng}
+
+            # check the strategy of the opponent
+            strategy = "Unknown"
+
+            if len(discard_suits) == 1 and len(exposed_suits) <= 1:
+                strategy = "maybe same color"
+
+            elif len(opponent.exposed_sets) >= 2:
+                strategy = "maybe pengpenghu"
+
+            elif all(opponent.hand.count(tile) == 2 for tile in opponent.hand):
+                strategy = "maybe seven pairs"
+
+            player_analysis[opponent.name] = strategy
+
+        return player_analysis
 
     def peng(self, tile):
         if self.hand.count(tile) >= 2:
@@ -345,7 +386,7 @@ class MahjongGame:
         for player in self.players:
             print(f"{player.name}: {player.sorted_hand()} (Total: {len(player.hand)})")
 
-        # Players exchange three tiles**
+        # Players exchange three tiles
         print("\nStarting tile exchange process...")
         for i in range(4):
             giver = self.players[i]
@@ -375,7 +416,7 @@ class MahjongGame:
         for player in self.players:
             player.determine_banned_suit()
 
-        #Final check: Dealer must have 14 tiles, others 13**
+        # Final check: Dealer must have 14 tiles, others 13
         for player in self.players:
             expected_tiles = 14 if player == dealer else 13
             assert len(player.hand) == expected_tiles, f"ERROR: {player.name} has {len(player.hand)} tiles instead of {expected_tiles}!"
