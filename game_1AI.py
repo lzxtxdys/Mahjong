@@ -1,4 +1,5 @@
 import random
+from rl_agent import RLAgent
 
 # defining tiles
 def generate_deck():
@@ -8,7 +9,7 @@ def generate_deck():
 
 # players
 class Player:
-    def __init__(self, name):
+    def __init__(self, name, is_ai=False):
         self.name = name
         self.hand = []
         self.is_hu = False
@@ -16,6 +17,10 @@ class Player:
         self.bannned_suit = None
         self.exposed_sets = [] # store exposed sets of tiles
         self.gang_count = 0
+        self.is_ai = is_ai
+
+        if self.is_ai:
+            self.ai = RLAgent()
     
     def draw_tile(self, deck, count=1):
         for _ in range(count):
@@ -69,29 +74,183 @@ class Player:
 
         print(f"{self.name} bans suit {self.banned_suit}")
 
-    def discard_tile(self):
-        """
-        if the player has tiles of banned suit, they must discard the tiles
-        if there are no tiles of banned suit, then randomly discard a tile
-        """
-        if not self.hand:
-            return None
+    # def discard_tile(self):
+    #     """
+    #     if the player has tiles of banned suit, they must discard the tiles
+    #     if there are no tiles of banned suit, then randomly discard a tile
+    #     """
+    #     if not self.hand:
+    #         return None
         
-        opponent_analysis = self.analyze_opponents(game)
+    #     opponent_analysis = self.analyze_opponents(game)
 
-        # if banned tile exist, discard it
+    #     # if banned tile exist, discard it
+    #     banned_tiles = [tile for tile in self.hand if self.banned_suit in tile]
+    #     if banned_tiles:
+    #         discarded_tile = self.choose_safest_tile(banned_tiles, game, opponent_analysis)
+    #         print(f"{self.name} discarded {discarded_tile} (Banned Suit)")
+    #         self.hand.remove(discarded_tile)
+    #         return discarded_tile
+        
+    #     tile_scores = self.evaluate_tile_values(game, opponent_analysis)
+
+    #     discarded_tile = min(tile_scores, key=tile_scores.get)
+    #     self.hand.remove(discarded_tile)
+    #     print(f"{self.name} discarded {discarded_tile} (safer tile)")
+    #     return discarded_tile
+
+    # def discard_tile(self, game):
+    #     """ use decision tree to discard the tile """
+    #     if not self.hand:
+    #         return None  # avoid discarding when no tiles left
+        
+    #     if self.is_ai:
+    #         action, tile = self.rl_agent.choose_action(self, game)
+    #         if action == "discard":
+    #             self.hand.remove(tile)
+    #             print(f"{self.name} discarded {tile} (AI Choice)")
+    #             return tile
+        
+    #     else:
+    #         opponent_analysis = self.analyze_opponents(game)
+
+    #         # discard banned suit tiles first
+    #         banned_tiles = [tile for tile in self.hand if self.banned_suit in tile]
+    #         if banned_tiles:
+    #             discarded_tile = self.choose_safest_tile(banned_tiles, game, opponent_analysis)
+    #             print(f"{self.name} discarded {discarded_tile}(banned suits)")
+    #             self.hand.remove(discarded_tile)
+    #             return discarded_tile
+
+    #         # decision tree
+    #         discard_candidates = self.hand.copy()
+
+    #         # discard single tiles first
+    #         single_tiles = [t for t in discard_candidates if self.hand.count(t) == 1]
+    #         if single_tiles:
+    #             discarded_tile = self.choose_safest_tile(single_tiles, game, opponent_analysis)
+    #             print(f"{self.name} discarded {discarded_tile}(single)")
+    #             self.hand.remove(discarded_tile)
+    #             return discarded_tile
+
+    #         # if there are pair tiles, keep them and check if seven pairs is possible
+    #         pair_tiles = [t for t in discard_candidates if self.hand.count(t) == 2]
+    #         if pair_tiles:
+    #             if self.is_seven_pairs(self.hand):  # if seven pairs is possible, keep the pair
+    #                 pass
+    #             else:
+    #                 discarded_tile = self.choose_safest_tile(pair_tiles, game, opponent_analysis)
+    #                 print(f"{self.name} discarded {discarded_tile}(pairs)")
+    #                 self.hand.remove(discarded_tile)
+    #                 return discarded_tile
+
+    #         # if opponents are likely to make same color, avoid discarding the same color
+    #         for opponent_name, strategy in opponent_analysis.items():
+    #             if strategy == "maybe same color":
+    #                 discard_candidates = [t for t in discard_candidates if t[-1] != self.banned_suit]
+
+    #         # if opponents are likely to make pengpenghu, avoid discarding pairs
+    #         for opponent_name, strategy in opponent_analysis.items():
+    #             if strategy == "maybe pengpenghu":
+    #                 discard_candidates = [t for t in discard_candidates if self.hand.count(t) != 2]
+
+    #         # discard safe tiles only if the rest deck is less than 20
+    #         if len(game.deck) < 20:
+    #             discard_candidates = sorted(discard_candidates, key=lambda x: game.get_discard_count(x), reverse=True)
+
+    #         # finally choose the safest tile to discard
+    #         discarded_tile = self.choose_safest_tile(discard_candidates, game, opponent_analysis)
+    #         print(f"{self.name} discarded {discarded_tile}(safest tiles)")
+    #         self.hand.remove(discarded_tile)
+    #         return discarded_tile
+
+    # def discard_tile(self, game):
+    #     """ Use decision tree to discard the tile, prioritizing banned suit tiles first. """
+    #     if not self.hand:
+    #         return None  # Avoid discarding when no tiles are left
+
+    #     # **2️⃣ Always Discard Banned Suit First**
+    #     banned_tiles = [tile for tile in self.hand if self.banned_suit in tile]
+    #     if banned_tiles:
+    #         discarded_tile = random.choice(banned_tiles)  # Choose any banned tile to discard
+    #         print(f"{self.name} discarded {discarded_tile} (Banned Suit)")
+    #         self.hand.remove(discarded_tile)
+    #         return discarded_tile
+        
+    #     # **1️⃣ AI Uses RL Agent for Decision Making**
+    #     if self.is_ai:
+    #         action, tile = self.rl_agent.choose_action(self, game)
+    #         if action == "discard":
+    #             self.hand.remove(tile)
+    #             print(f"{self.name} discarded {tile} (AI Choice)")
+    #             return tile
+
+    #     # **3️⃣ Analyze Opponent Strategies for Smarter Discarding**
+    #     opponent_analysis = self.analyze_opponents(game)
+
+    #     # **4️⃣ Decision Tree Logic:**
+    #     discard_candidates = self.hand.copy()
+
+    #     # **4.1. Discard Single Tiles First**
+    #     single_tiles = [t for t in discard_candidates if self.hand.count(t) == 1]
+    #     if single_tiles:
+    #         discarded_tile = self.choose_safest_tile(single_tiles, game, opponent_analysis)
+    #         print(f"{self.name} discarded {discarded_tile} (Single)")
+    #         self.hand.remove(discarded_tile)
+    #         return discarded_tile
+
+    #     # **4.2. Discard Pairs If Seven Pairs Is Not Viable**
+    #     pair_tiles = [t for t in discard_candidates if self.hand.count(t) == 2]
+    #     if pair_tiles:
+    #         if self.is_seven_pairs(self.hand):  # If seven pairs is viable, keep pairs
+    #             pass
+    #         else:
+    #             discarded_tile = self.choose_safest_tile(pair_tiles, game, opponent_analysis)
+    #             print(f"{self.name} discarded {discarded_tile} (Pairs)")
+    #             self.hand.remove(discarded_tile)
+    #             return discarded_tile
+
+    #     # **4.3. Avoid Giving Opponents Good Tiles**
+    #     for opponent_name, strategy in opponent_analysis.items():
+    #         if strategy == "maybe same color":
+    #             discard_candidates = [t for t in discard_candidates if t[-1] != self.banned_suit]
+    #         if strategy == "maybe pengpenghu":
+    #             discard_candidates = [t for t in discard_candidates if self.hand.count(t) != 2]
+
+    #     # **4.4. Prioritize Safe Discards If Deck Is Running Low**
+    #     if len(game.deck) < 20:
+    #         discard_candidates = sorted(discard_candidates, key=lambda x: game.get_discard_count(x), reverse=True)
+
+    #     # **5️⃣ Choose the Safest Tile to Discard**
+    #     discarded_tile = self.choose_safest_tile(discard_candidates, game, opponent_analysis)
+    #     print(f"{self.name} discarded {discarded_tile} (Safest Tile)")
+    #     self.hand.remove(discarded_tile)
+    #     return discarded_tile
+
+    def discard_tile(self, game):
+        """ Discard a tile, AI follows strategy while others discard randomly """
+        if not self.hand:
+            return None  # Avoid discarding when no tiles left
+
         banned_tiles = [tile for tile in self.hand if self.banned_suit in tile]
         if banned_tiles:
-            discarded_tile = self.choose_safest_tile(banned_tiles, game, opponent_analysis)
+            discarded_tile = random.choice(banned_tiles)  # Choose any banned tile to discard
             print(f"{self.name} discarded {discarded_tile} (Banned Suit)")
             self.hand.remove(discarded_tile)
             return discarded_tile
         
-        tile_scores = self.evaluate_tile_values(game, opponent_analysis)
+        # **1️⃣ AI Uses Reinforcement Learning**
+        if self.is_ai:
+            action, tile = self.rl_agent.choose_action(self, game)
+            if action == "discard":
+                self.hand.remove(tile)
+                print(f"{self.name} discarded {tile} (AI Choice)")
+                return tile
 
-        discarded_tile = min(tile_scores, key=tile_scores.get)
+        # **2️⃣ Random Players Discard Randomly**
+        discarded_tile = random.choice(self.hand)
         self.hand.remove(discarded_tile)
-        print(f"{self.name} discarded {discarded_tile} (safer tile)")
+        print(f"{self.name} discarded {discarded_tile} (Random Choice)")
         return discarded_tile
 
     def choose_safest_tile(self, candidates, game, opponent_analysis):
@@ -200,14 +359,21 @@ class Player:
         return player_analysis
 
     def peng(self, tile):
+        """ AI decides whether to Peng a tile. If it's from the banned suit, Peng is not allowed. """
         if self.hand.count(tile) >= 2:
+            if tile.endswith(self.banned_suit):  # ✅ Prevent Peng if tile is in banned suit
+                print(f"{self.name} chose NOT to Peng {tile} (Banned Suit)")
+                return False  # Do not Peng
+            
+            # If tile is not in banned suit, Peng is allowed
             self.hand.remove(tile)
             self.hand.remove(tile)
-            self.exposed_sets.append([tile, tile, tile])
+            self.exposed_sets.append([tile, tile, tile])  # Add Peng to exposed sets
             print(f"{self.name} Peng {tile}")
-            return True
-        return False
-    
+            return True  # Peng success
+        
+        return False  # No Peng
+  
     def is_seven_pairs(self, hand):
         if len(hand) != 14:
             return False
@@ -336,7 +502,7 @@ class Player:
             fan_count += 2
         
         # 7 pairs 2 fan
-        if self.is_seven_pairs():
+        if self.is_seven_pairs(self.hand):
             fan_count += 2
         
         # every gang 1 fan
@@ -348,7 +514,7 @@ class Player:
 
         final_score = base_score * (2 ** fan_count)
 
-        print(f"{self.name} hu! final score: {final_score}")
+        print(f"!!!!!!!!!!!!!!!{self.name} hu! final score: {final_score}!!!!!!!!!!!!!!")
         return final_score
 
 
@@ -358,6 +524,12 @@ class MahjongGame:
         self.deck = generate_deck()
         self.players = [Player(f"Player {i+1}") for i in range(4)]
         self.discards = []
+
+        self.players[0].is_ai = True
+        self.players[0].rl_agent = RLAgent()
+
+        for i in range(1, 4):
+            self.players[i].is_ai = False
     
     def determine_dealer(self):
         self.players.sort(key=lambda x: x.dice_roll, reverse=True)
@@ -461,6 +633,7 @@ class MahjongGame:
         return self.discards.count(tile)
     
     def play_game(self):
+        print("                                  ")
         print("Game Start: Dealing tiles...")
         self.deal_tiles()
         
@@ -474,6 +647,10 @@ class MahjongGame:
             if player.is_hu:
                 current_player_index = (current_player_index + 1) % 4
                 continue
+
+            if not self.deck:
+                print("No more tiles in deck, game over!")
+                break
             
             print(f"{player.name} drawing tile, tile is {self.deck[-1]} (Remaining: {len(self.deck)-1})")
             player.draw_tile(self.deck)
@@ -486,12 +663,26 @@ class MahjongGame:
                     game_over = True
                 continue
             
-            discarded = player.discard_tile()
+            discarded = player.discard_tile(self)
             if discarded:
                 print(f"{player.name} hand after discard: {player.sorted_hand()}")
                 self.print_exposed_and_discarded_tiles()
                 print("                           ")
                 self.discards.append(discarded)
+
+                hu_player = None
+                for next_player in self.players:
+                    if next_player != player and next_player.check_hu_with_tile(discarded):
+                        hu_player = next_player
+                        break
+
+                if hu_player:
+                    score = hu_player.calculate_score(is_zimo=False)
+                    print(f"{hu_player.name} Hu! 🀄 Final Score: {score}")
+                    hu_player.is_hu = True
+                    if sum(p.is_hu for p in self.players) == 3:
+                        game_over = True
+                    continue
 
                 peng_player = None
                 for i in range(1, 4):
@@ -501,7 +692,7 @@ class MahjongGame:
                         break
 
                 if peng_player:
-                    discarded_after_peng = peng_player.discard_tile()
+                    discarded_after_peng = peng_player.discard_tile(self)
                     if discarded_after_peng:
                         print(f"{peng_player.name} hand after discard: {peng_player.sorted_hand()}")
                         self.print_exposed_and_discarded_tiles()
