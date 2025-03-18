@@ -2,15 +2,13 @@ import sys
 from game_4AI import MahjongGame
 from rl_agent import RLAgent
 
-# Redirect console output to a file
-log_filename = "train_log.txt"
-sys.stdout = open(log_filename, "w")  # All print statements will go to this file
 
-# Initialize AI Agent
+log_filename = "train_log.txt"
+sys.stdout = open(log_filename, "w")
+
 rl_agent = RLAgent()
 
-# Training parameters
-num_episodes = 10000  # Number of training games
+num_episodes = 10000
 
 wins = {f"Player {i+1}": 0 for i in range(4)}
 
@@ -20,21 +18,20 @@ for episode in range(num_episodes):
     # Make all players AI-controlled
     for player in game.players:
         player.is_ai = True
-        player.rl_agent = rl_agent  # Assign AI agent
-
-    game.play_game()  # Simulate the game
+        player.rl_agent = rl_agent
+    game.play_game()
 
     for player in game.players:
         if player.is_hu:
             wins[player.name] += 1
             break
 
-    rl_agent.save_q_table()  # Save the AI's learned strategy
+    # Save the AI's learned strategy
+    rl_agent.save_q_table()
 
     if episode % 100 == 0:
-        print(f"Training Episode {episode} completed")  # Will be written to file
+        print(f"Training Episode {episode} completed")
 
-# Restore console output to normal
 sys.stdout.close()
 sys.stdout = sys.__stdout__
 

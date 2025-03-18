@@ -169,7 +169,7 @@ class Player:
         if not self.hand:
             return None  # Avoid discarding when no tiles are left
 
-        # **2️⃣ Always Discard Banned Suit First**
+        # always discard banend suit first
         banned_tiles = [tile for tile in self.hand if self.banned_suit in tile]
         if banned_tiles:
             discarded_tile = random.choice(banned_tiles)  # Choose any banned tile to discard
@@ -177,7 +177,7 @@ class Player:
             self.hand.remove(discarded_tile)
             return discarded_tile
         
-        # **1️⃣ AI Uses RL Agent for Decision Making**
+        # use RL Agent to choose action
         if self.is_ai:
             action, tile = self.rl_agent.choose_action(self, game)
             if action == "discard":
@@ -185,24 +185,25 @@ class Player:
                 print(f"{self.name} discarded {tile} (AI Choice)")
                 return tile
 
-        # **3️⃣ Analyze Opponent Strategies for Smarter Discarding**
+        # analyze opponents' play style and guess their target combinations
         opponent_analysis = self.analyze_opponents(game)
 
-        # **4️⃣ Decision Tree Logic:**
+        # decision tree logic
         discard_candidates = self.hand.copy()
 
-        # **4.1. Discard Single Tiles First**
+        # discard single tiles first
         single_tiles = [t for t in discard_candidates if self.hand.count(t) == 1]
         if single_tiles:
             discarded_tile = self.choose_safest_tile(single_tiles, game, opponent_analysis)
             print(f"{self.name} discarded {discarded_tile} (Single)")
             self.hand.remove(discarded_tile)
             return discarded_tile
-
-        # **4.2. Discard Pairs If Seven Pairs Is Not Viable**
+        
+        # discard pairs if seven pairs is not viable
         pair_tiles = [t for t in discard_candidates if self.hand.count(t) == 2]
         if pair_tiles:
-            if self.is_seven_pairs(self.hand):  # If seven pairs is viable, keep pairs
+            # If seven pairs is viable, keep pairs
+            if self.is_seven_pairs(self.hand):
                 pass
             else:
                 discarded_tile = self.choose_safest_tile(pair_tiles, game, opponent_analysis)
@@ -210,18 +211,19 @@ class Player:
                 self.hand.remove(discarded_tile)
                 return discarded_tile
 
-        # **4.3. Avoid Giving Opponents Good Tiles**
+        # avoid discarding the same color if opponents are likely to make same color
+        # avoid discarding pairs if opponents are likely to make pengpenghu
         for opponent_name, strategy in opponent_analysis.items():
             if strategy == "maybe same color":
                 discard_candidates = [t for t in discard_candidates if t[-1] != self.banned_suit]
             if strategy == "maybe pengpenghu":
                 discard_candidates = [t for t in discard_candidates if self.hand.count(t) != 2]
 
-        # **4.4. Prioritize Safe Discards If Deck Is Running Low**
+        # discard safe tiles only if the remaining deck is less than 20
         if len(game.deck) < 20:
             discard_candidates = sorted(discard_candidates, key=lambda x: game.get_discard_count(x), reverse=True)
 
-        # **5️⃣ Choose the Safest Tile to Discard**
+        # finally, choose the safest tile to discard
         discarded_tile = self.choose_safest_tile(discard_candidates, game, opponent_analysis)
         print(f"{self.name} discarded {discarded_tile} (Safest Tile)")
         self.hand.remove(discarded_tile)

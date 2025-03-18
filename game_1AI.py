@@ -230,16 +230,17 @@ class Player:
     def discard_tile(self, game):
         """ Discard a tile, AI follows strategy while others discard randomly """
         if not self.hand:
-            return None  # Avoid discarding when no tiles left
+            return None
 
         banned_tiles = [tile for tile in self.hand if self.banned_suit in tile]
         if banned_tiles:
-            discarded_tile = random.choice(banned_tiles)  # Choose any banned tile to discard
+            # Choose any banned tile to discard
+            discarded_tile = random.choice(banned_tiles)
             print(f"{self.name} discarded {discarded_tile} (Banned Suit)")
             self.hand.remove(discarded_tile)
             return discarded_tile
         
-        # **1️⃣ AI Uses Reinforcement Learning**
+        # AI uses RL agent for decision making
         if self.is_ai:
             action, tile = self.rl_agent.choose_action(self, game)
             if action == "discard":
@@ -247,7 +248,7 @@ class Player:
                 print(f"{self.name} discarded {tile} (AI Choice)")
                 return tile
 
-        # **2️⃣ Random Players Discard Randomly**
+        # other players discard randomly
         discarded_tile = random.choice(self.hand)
         self.hand.remove(discarded_tile)
         print(f"{self.name} discarded {discarded_tile} (Random Choice)")

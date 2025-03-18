@@ -17,7 +17,7 @@ class RLAgent:
             self.q_table = {}
 
     def get_state(self, player, game):
-        """ Convert game state into a tuple representation """
+        # Convert game state into a tuple representation.
         state = []
 
         # Encode player's hand (count of each tile)
@@ -37,7 +37,7 @@ class RLAgent:
         return tuple(state)  # Hashable type
 
     def get_possible_actions(self, player, game):
-        """ Returns a list of valid actions AI can take. """
+        # Returns a list of valid actions AI can take.
         actions = [("discard", tile) for tile in set(player.hand)]
         
         # Peng
@@ -57,7 +57,7 @@ class RLAgent:
         return actions
 
     def choose_action(self, player, game):
-        """ Uses Q-learning to choose the best action for AI. """
+        # Uses Q-learning to choose the best action for AI.
         state = self.get_state(player, game)
         possible_actions = self.get_possible_actions(player, game)
 
@@ -70,7 +70,7 @@ class RLAgent:
         return best_action
 
     def update_q_table(self, player, game, action, reward, new_state):
-        """ Updates the Q-table using Q-learning update rule. """
+        # Updates the Q-table using Q-learning update rule.
         state = self.get_state(player, game)
         new_state = tuple(new_state)
         action = tuple(action)
@@ -88,6 +88,6 @@ class RLAgent:
         self.q_table[(state, action)] = new_q
 
     def save_q_table(self):
-        """ Save Q-table to file. """
+        # Save Q-table to file.
         with open(self.q_table_file, "wb") as f:
             pickle.dump(self.q_table, f)
