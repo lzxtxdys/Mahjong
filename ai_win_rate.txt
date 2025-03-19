@@ -1,5 +1,12 @@
 Final Win Count After 10000 Games:
-Player 1 Wins: 1449
-Player 2 Wins: 59
-Player 3 Wins: 54
-Player 4 Wins: 62
+Player 1 Wins: 4190 (41.90%)
+Player 2 Wins: 160 (1.60%)
+Player 3 Wins: 151 (1.51%)
+Player 4 Wins: 166 (1.66%)
+
+Performance Analysis:
+AI win rate: 41.90%
+Random players avg win rate: 1.59%
+AI advantage: 40.31%
+Average game length: 42.3 rounds
+Game completion rate: 46.67%

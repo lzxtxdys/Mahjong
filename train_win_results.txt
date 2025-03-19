@@ -1,5 +1,9 @@
-Final Win Count After 10000 Training Games:
-Player 1 Wins: 69
-Player 2 Wins: 82
-Player 3 Wins: 62
-Player 4 Wins: 95
+Training Results (50000 episodes):
+Total time: 198.84 seconds
+Final epsilon: 0.2500
+Q-table entries: 51111
+
+Player 1 wins: 1065 (2.13%)
+Player 2 wins: 1069 (2.14%)
+Player 3 wins: 1210 (2.42%)
+Player 4 wins: 1231 (2.46%)

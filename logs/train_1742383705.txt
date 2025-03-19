@@ -1,0 +1,364 @@
+Created new Q-table
+Saved Q-table with 11131 entries
+Episode 1000/50000 (3.8s)
+Current epsilon: 0.2500
+Win rate: 0.1200
+Wins: {'Player 1': 23, 'Player 2': 27, 'Player 3': 33, 'Player 4': 37}
+Q-table size: 11131
+--------------------------------------------------
+Saved Q-table with 15113 entries
+Episode 2000/50000 (7.7s)
+Current epsilon: 0.2500
+Win rate: 0.1105
+Wins: {'Player 1': 52, 'Player 2': 47, 'Player 3': 56, 'Player 4': 66}
+Q-table size: 15113
+--------------------------------------------------
+Saved Q-table with 17773 entries
+Episode 3000/50000 (11.6s)
+Current epsilon: 0.2500
+Win rate: 0.1003
+Wins: {'Player 1': 69, 'Player 2': 65, 'Player 3': 77, 'Player 4': 90}
+Q-table size: 17773
+--------------------------------------------------
+Saved Q-table with 19823 entries
+Episode 4000/50000 (15.5s)
+Current epsilon: 0.2500
+Win rate: 0.0948
+Wins: {'Player 1': 86, 'Player 2': 85, 'Player 3': 96, 'Player 4': 112}
+Q-table size: 19823
+--------------------------------------------------
+Saved Q-table with 21545 entries
+Saved Q-table with 21545 entries
+Episode 5000/50000 (19.4s)
+Current epsilon: 0.2500
+Win rate: 0.0968
+Wins: {'Player 1': 117, 'Player 2': 112, 'Player 3': 119, 'Player 4': 136}
+Q-table size: 21545
+--------------------------------------------------
+Saved Q-table with 22975 entries
+Episode 6000/50000 (23.3s)
+Current epsilon: 0.2500
+Win rate: 0.0973
+Wins: {'Player 1': 145, 'Player 2': 136, 'Player 3': 143, 'Player 4': 160}
+Q-table size: 22975
+--------------------------------------------------
+Saved Q-table with 24183 entries
+Episode 7000/50000 (27.2s)
+Current epsilon: 0.2500
+Win rate: 0.0960
+Wins: {'Player 1': 162, 'Player 2': 152, 'Player 3': 171, 'Player 4': 187}
+Q-table size: 24183
+--------------------------------------------------
+Saved Q-table with 25291 entries
+Episode 8000/50000 (31.1s)
+Current epsilon: 0.2500
+Win rate: 0.0964
+Wins: {'Player 1': 182, 'Player 2': 180, 'Player 3': 195, 'Player 4': 214}
+Q-table size: 25291
+--------------------------------------------------
+Saved Q-table with 26310 entries
+Episode 9000/50000 (35.0s)
+Current epsilon: 0.2500
+Win rate: 0.0972
+Wins: {'Player 1': 206, 'Player 2': 204, 'Player 3': 222, 'Player 4': 243}
+Q-table size: 26310
+--------------------------------------------------
+Saved Q-table with 27179 entries
+Saved Q-table with 27179 entries
+Episode 10000/50000 (39.0s)
+Current epsilon: 0.2500
+Win rate: 0.0974
+Wins: {'Player 1': 233, 'Player 2': 227, 'Player 3': 240, 'Player 4': 274}
+Q-table size: 27179
+--------------------------------------------------
+Saved Q-table with 28000 entries
+Episode 11000/50000 (42.9s)
+Current epsilon: 0.2500
+Win rate: 0.0968
+Wins: {'Player 1': 258, 'Player 2': 246, 'Player 3': 262, 'Player 4': 299}
+Q-table size: 28000
+--------------------------------------------------
+Saved Q-table with 28743 entries
+Episode 12000/50000 (46.8s)
+Current epsilon: 0.2500
+Win rate: 0.0962
+Wins: {'Player 1': 274, 'Player 2': 262, 'Player 3': 293, 'Player 4': 325}
+Q-table size: 28743
+--------------------------------------------------
+Saved Q-table with 29461 entries
+Episode 13000/50000 (50.7s)
+Current epsilon: 0.2500
+Win rate: 0.0960
+Wins: {'Player 1': 301, 'Player 2': 282, 'Player 3': 317, 'Player 4': 348}
+Q-table size: 29461
+--------------------------------------------------
+Saved Q-table with 30135 entries
+Episode 14000/50000 (54.6s)
+Current epsilon: 0.2500
+Win rate: 0.0966
+Wins: {'Player 1': 328, 'Player 2': 305, 'Player 3': 348, 'Player 4': 371}
+Q-table size: 30135
+--------------------------------------------------
+Saved Q-table with 30712 entries
+Saved Q-table with 30712 entries
+Episode 15000/50000 (58.5s)
+Current epsilon: 0.2500
+Win rate: 0.0953
+Wins: {'Player 1': 349, 'Player 2': 320, 'Player 3': 369, 'Player 4': 392}
+Q-table size: 30712
+--------------------------------------------------
+Saved Q-table with 31327 entries
+Episode 16000/50000 (62.4s)
+Current epsilon: 0.2500
+Win rate: 0.0953
+Wins: {'Player 1': 374, 'Player 2': 343, 'Player 3': 387, 'Player 4': 420}
+Q-table size: 31327
+--------------------------------------------------
+Saved Q-table with 31909 entries
+Episode 17000/50000 (66.3s)
+Current epsilon: 0.2500
+Win rate: 0.0951
+Wins: {'Player 1': 390, 'Player 2': 367, 'Player 3': 411, 'Player 4': 448}
+Q-table size: 31909
+--------------------------------------------------
+Saved Q-table with 32462 entries
+Episode 18000/50000 (70.3s)
+Current epsilon: 0.2500
+Win rate: 0.0956
+Wins: {'Player 1': 415, 'Player 2': 397, 'Player 3': 433, 'Player 4': 475}
+Q-table size: 32462
+--------------------------------------------------
+Saved Q-table with 32993 entries
+Episode 19000/50000 (74.7s)
+Current epsilon: 0.2500
+Win rate: 0.0958
+Wins: {'Player 1': 442, 'Player 2': 424, 'Player 3': 459, 'Player 4': 496}
+Q-table size: 32993
+--------------------------------------------------
+Saved Q-table with 33497 entries
+Saved Q-table with 33497 entries
+Episode 20000/50000 (78.6s)
+Current epsilon: 0.2500
+Win rate: 0.0960
+Wins: {'Player 1': 467, 'Player 2': 442, 'Player 3': 488, 'Player 4': 523}
+Q-table size: 33497
+--------------------------------------------------
+Saved Q-table with 34001 entries
+Episode 21000/50000 (82.5s)
+Current epsilon: 0.2500
+Win rate: 0.0965
+Wins: {'Player 1': 494, 'Player 2': 465, 'Player 3': 516, 'Player 4': 552}
+Q-table size: 34001
+--------------------------------------------------
+Saved Q-table with 34481 entries
+Episode 22000/50000 (86.5s)
+Current epsilon: 0.2500
+Win rate: 0.0966
+Wins: {'Player 1': 516, 'Player 2': 488, 'Player 3': 545, 'Player 4': 576}
+Q-table size: 34481
+--------------------------------------------------
+Saved Q-table with 34888 entries
+Episode 23000/50000 (90.4s)
+Current epsilon: 0.2500
+Win rate: 0.0962
+Wins: {'Player 1': 536, 'Player 2': 508, 'Player 3': 570, 'Player 4': 599}
+Q-table size: 34888
+--------------------------------------------------
+Saved Q-table with 35292 entries
+Episode 24000/50000 (94.5s)
+Current epsilon: 0.2500
+Win rate: 0.0963
+Wins: {'Player 1': 558, 'Player 2': 531, 'Player 3': 597, 'Player 4': 625}
+Q-table size: 35292
+--------------------------------------------------
+Saved Q-table with 35741 entries
+Saved Q-table with 35741 entries
+Episode 25000/50000 (98.4s)
+Current epsilon: 0.2500
+Win rate: 0.0957
+Wins: {'Player 1': 571, 'Player 2': 558, 'Player 3': 619, 'Player 4': 645}
+Q-table size: 35741
+--------------------------------------------------
+Saved Q-table with 36171 entries
+Episode 26000/50000 (102.3s)
+Current epsilon: 0.2500
+Win rate: 0.0956
+Wins: {'Player 1': 586, 'Player 2': 577, 'Player 3': 647, 'Player 4': 675}
+Q-table size: 36171
+--------------------------------------------------
+Saved Q-table with 36536 entries
+Episode 27000/50000 (106.3s)
+Current epsilon: 0.2500
+Win rate: 0.0956
+Wins: {'Player 1': 610, 'Player 2': 599, 'Player 3': 677, 'Player 4': 694}
+Q-table size: 36536
+--------------------------------------------------
+Saved Q-table with 36888 entries
+Episode 28000/50000 (110.3s)
+Current epsilon: 0.2500
+Win rate: 0.0952
+Wins: {'Player 1': 630, 'Player 2': 616, 'Player 3': 702, 'Player 4': 717}
+Q-table size: 36888
+--------------------------------------------------
+Saved Q-table with 37248 entries
+Episode 29000/50000 (114.3s)
+Current epsilon: 0.2500
+Win rate: 0.0950
+Wins: {'Player 1': 647, 'Player 2': 638, 'Player 3': 727, 'Player 4': 743}
+Q-table size: 37248
+--------------------------------------------------
+Saved Q-table with 37572 entries
+Saved Q-table with 37572 entries
+Episode 30000/50000 (118.3s)
+Current epsilon: 0.2500
+Win rate: 0.0943
+Wins: {'Player 1': 665, 'Player 2': 654, 'Player 3': 754, 'Player 4': 756}
+Q-table size: 37572
+--------------------------------------------------
+Saved Q-table with 37940 entries
+Episode 31000/50000 (122.2s)
+Current epsilon: 0.2500
+Win rate: 0.0941
+Wins: {'Player 1': 686, 'Player 2': 669, 'Player 3': 785, 'Player 4': 778}
+Q-table size: 37940
+--------------------------------------------------
+Saved Q-table with 38264 entries
+Episode 32000/50000 (126.1s)
+Current epsilon: 0.2500
+Win rate: 0.0943
+Wins: {'Player 1': 711, 'Player 2': 684, 'Player 3': 817, 'Player 4': 806}
+Q-table size: 38264
+--------------------------------------------------
+Saved Q-table with 38587 entries
+Episode 33000/50000 (129.9s)
+Current epsilon: 0.2500
+Win rate: 0.0942
+Wins: {'Player 1': 734, 'Player 2': 708, 'Player 3': 833, 'Player 4': 835}
+Q-table size: 38587
+--------------------------------------------------
+Saved Q-table with 38930 entries
+Episode 34000/50000 (133.8s)
+Current epsilon: 0.2500
+Win rate: 0.0942
+Wins: {'Player 1': 760, 'Player 2': 726, 'Player 3': 854, 'Player 4': 863}
+Q-table size: 38930
+--------------------------------------------------
+Saved Q-table with 39221 entries
+Saved Q-table with 39221 entries
+Episode 35000/50000 (137.7s)
+Current epsilon: 0.2500
+Win rate: 0.0943
+Wins: {'Player 1': 785, 'Player 2': 746, 'Player 3': 877, 'Player 4': 894}
+Q-table size: 39221
+--------------------------------------------------
+Saved Q-table with 39499 entries
+Episode 36000/50000 (141.6s)
+Current epsilon: 0.2500
+Win rate: 0.0940
+Wins: {'Player 1': 802, 'Player 2': 765, 'Player 3': 901, 'Player 4': 917}
+Q-table size: 39499
+--------------------------------------------------
+Saved Q-table with 39796 entries
+Episode 37000/50000 (145.5s)
+Current epsilon: 0.2500
+Win rate: 0.0941
+Wins: {'Player 1': 821, 'Player 2': 796, 'Player 3': 917, 'Player 4': 948}
+Q-table size: 39796
+--------------------------------------------------
+Saved Q-table with 40075 entries
+Episode 38000/50000 (149.4s)
+Current epsilon: 0.2500
+Win rate: 0.0940
+Wins: {'Player 1': 846, 'Player 2': 817, 'Player 3': 944, 'Player 4': 965}
+Q-table size: 40075
+--------------------------------------------------
+Saved Q-table with 40378 entries
+Episode 39000/50000 (153.3s)
+Current epsilon: 0.2500
+Win rate: 0.0939
+Wins: {'Player 1': 862, 'Player 2': 838, 'Player 3': 968, 'Player 4': 994}
+Q-table size: 40378
+--------------------------------------------------
+Saved Q-table with 40648 entries
+Saved Q-table with 40648 entries
+Episode 40000/50000 (157.3s)
+Current epsilon: 0.2500
+Win rate: 0.0939
+Wins: {'Player 1': 888, 'Player 2': 857, 'Player 3': 992, 'Player 4': 1017}
+Q-table size: 40648
+--------------------------------------------------
+Saved Q-table with 40883 entries
+Episode 41000/50000 (161.2s)
+Current epsilon: 0.2500
+Win rate: 0.0935
+Wins: {'Player 1': 909, 'Player 2': 873, 'Player 3': 1013, 'Player 4': 1037}
+Q-table size: 40883
+--------------------------------------------------
+Saved Q-table with 41127 entries
+Episode 42000/50000 (165.2s)
+Current epsilon: 0.2500
+Win rate: 0.0929
+Wins: {'Player 1': 921, 'Player 2': 893, 'Player 3': 1039, 'Player 4': 1047}
+Q-table size: 41127
+--------------------------------------------------
+Saved Q-table with 41387 entries
+Episode 43000/50000 (169.1s)
+Current epsilon: 0.2500
+Win rate: 0.0927
+Wins: {'Player 1': 942, 'Player 2': 923, 'Player 3': 1059, 'Player 4': 1064}
+Q-table size: 41387
+--------------------------------------------------
+Saved Q-table with 41649 entries
+Episode 44000/50000 (173.0s)
+Current epsilon: 0.2500
+Win rate: 0.0928
+Wins: {'Player 1': 954, 'Player 2': 946, 'Player 3': 1086, 'Player 4': 1096}
+Q-table size: 41649
+--------------------------------------------------
+Saved Q-table with 41900 entries
+Saved Q-table with 41900 entries
+Episode 45000/50000 (177.0s)
+Current epsilon: 0.2500
+Win rate: 0.0926
+Wins: {'Player 1': 972, 'Player 2': 962, 'Player 3': 1111, 'Player 4': 1123}
+Q-table size: 41900
+--------------------------------------------------
+Saved Q-table with 42124 entries
+Episode 46000/50000 (180.9s)
+Current epsilon: 0.2500
+Win rate: 0.0924
+Wins: {'Player 1': 1001, 'Player 2': 974, 'Player 3': 1132, 'Player 4': 1143}
+Q-table size: 42124
+--------------------------------------------------
+Saved Q-table with 42319 entries
+Episode 47000/50000 (184.8s)
+Current epsilon: 0.2500
+Win rate: 0.0925
+Wins: {'Player 1': 1021, 'Player 2': 997, 'Player 3': 1153, 'Player 4': 1175}
+Q-table size: 42319
+--------------------------------------------------
+Saved Q-table with 42586 entries
+Episode 48000/50000 (188.7s)
+Current epsilon: 0.2500
+Win rate: 0.0924
+Wins: {'Player 1': 1039, 'Player 2': 1015, 'Player 3': 1178, 'Player 4': 1202}
+Q-table size: 42586
+--------------------------------------------------
+Saved Q-table with 42816 entries
+Episode 49000/50000 (192.6s)
+Current epsilon: 0.2500
+Win rate: 0.0926
+Wins: {'Player 1': 1069, 'Player 2': 1038, 'Player 3': 1204, 'Player 4': 1228}
+Q-table size: 42816
+--------------------------------------------------
+Saved Q-table with 43008 entries
+Saved Q-table with 43008 entries
+Episode 50000/50000 (196.7s)
+Current epsilon: 0.2500
+Win rate: 0.0926
+Wins: {'Player 1': 1091, 'Player 2': 1062, 'Player 3': 1221, 'Player 4': 1257}
+Q-table size: 43008
+--------------------------------------------------
+Saved Q-table with 43008 entries
+
+Training completed in 196.67 seconds!
